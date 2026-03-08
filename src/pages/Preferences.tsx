@@ -1,7 +1,34 @@
+import { useState } from "react";
 import { usePreferences, type Theme } from "../utils/PreferencesContext";
 
 export default function Preferences() {
-    const { unit, setUnit, theme, setTheme, resetToDefaults } = usePreferences();
+    const { unit, setUnit, theme, setTheme, resetToDefaults, exportData, importData } = usePreferences();
+    const [importText, setImportText] = useState("");
+    const [importStatus, setImportStatus] = useState<"idle" | "success" | "error">("idle");
+    const [copied, setCopied] = useState(false);
+
+    const handleCopyExport = async () => {
+        try {
+            await navigator.clipboard.writeText(exportData());
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+            console.error("Failed to copy", err);
+        }
+    };
+
+    const handleImport = () => {
+        if (!importText.trim()) return;
+        const success = importData(importText.trim());
+        if (success) {
+            setImportStatus("success");
+            setImportText("");
+            setTimeout(() => setImportStatus("idle"), 3000);
+        } else {
+            setImportStatus("error");
+            setTimeout(() => setImportStatus("idle"), 3000);
+        }
+    };
 
     return (
         <div className="space-y-6">
@@ -65,6 +92,57 @@ export default function Preferences() {
                                 {t.label}
                             </button>
                         ))}
+                    </div>
+                </div>
+
+                {/* Data & Backup */}
+                <div className="pt-4 border-t border-gray-200 dark:border-slate-800 space-y-4">
+                    <div className="space-y-1">
+                        <h2 className="text-lg font-bold text-sky-400">Data & Backup</h2>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                            Export your preferences and custom recipes to copy them to another device or browser.
+                        </p>
+                    </div>
+
+                    <div className="flex flex-col gap-4">
+                        <div>
+                            <button
+                                type="button"
+                                onClick={handleCopyExport}
+                                className="rounded-lg bg-sky-500 px-4 py-2 text-sm font-medium text-white hover:bg-sky-600 transition-colors"
+                            >
+                                {copied ? "Copied to Clipboard!" : "Copy Export Data"}
+                            </button>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Import Data
+                            </label>
+                            <div className="flex gap-2">
+                                <input
+                                    type="text"
+                                    value={importText}
+                                    onChange={(e) => setImportText(e.target.value)}
+                                    placeholder="Paste exported data string here..."
+                                    className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={handleImport}
+                                    disabled={!importText.trim()}
+                                    className="rounded-lg bg-gray-200 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-300 disabled:opacity-50 dark:bg-slate-700 dark:text-gray-200 dark:hover:bg-slate-600 transition-colors"
+                                >
+                                    Import
+                                </button>
+                            </div>
+                            {importStatus === "success" && (
+                                <p className="text-xs font-medium text-green-600 dark:text-green-400">Data imported successfully!</p>
+                            )}
+                            {importStatus === "error" && (
+                                <p className="text-xs font-medium text-red-600 dark:text-red-400">Invalid data format.</p>
+                            )}
+                        </div>
                     </div>
                 </div>
 

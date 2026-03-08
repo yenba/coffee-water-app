@@ -7,12 +7,28 @@ import NumberInput from "../components/NumberInput";
 import ResultCard from "../components/ResultCard";
 
 export default function CustomRecipe() {
-  const { unit, setUnit } = usePreferences();
+  const { unit, setUnit, addCustomRecipe } = usePreferences();
   const [waterAmount, setWaterAmount] = useState(1.0);
   const [hardnessSaltId, setHardnessSaltId] = useState("epsom-salt");
   const [bufferSaltId, setBufferSaltId] = useState("baking-soda");
   const [desiredGH, setDesiredGH] = useState(30.0);
   const [desiredKH, setDesiredKH] = useState(70.0);
+  const [recipeName, setRecipeName] = useState("");
+  const [saveStatus, setSaveStatus] = useState<"idle" | "success">("idle");
+
+  const handleSaveRecipe = () => {
+    if (!recipeName.trim()) return;
+    addCustomRecipe({
+      name: recipeName.trim(),
+      gh: desiredGH,
+      kh: desiredKH,
+    });
+    setSaveStatus("success");
+    setTimeout(() => {
+      setSaveStatus("idle");
+      setRecipeName("");
+    }, 2000);
+  };
 
   const hardnessSalt = getSaltById(hardnessSaltId)!;
   const bufferSalt = getSaltById(bufferSaltId)!;
@@ -109,6 +125,27 @@ export default function CustomRecipe() {
           </span>
         </p>
       </ResultCard>
+
+      <div className="space-y-4 rounded-xl border border-gray-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900 !mt-8">
+        <h2 className="text-lg font-bold text-sky-400">Save This Recipe</h2>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={recipeName}
+            onChange={(e) => setRecipeName(e.target.value)}
+            placeholder="Recipe Name (e.g., My Brew Water)"
+            className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+          />
+          <button
+            type="button"
+            onClick={handleSaveRecipe}
+            disabled={!recipeName.trim() || saveStatus === "success"}
+            className="rounded-lg bg-sky-500 px-4 py-2 text-sm font-medium text-white hover:bg-sky-600 disabled:opacity-50 transition-colors"
+          >
+            {saveStatus === "success" ? "Saved!" : "Save"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

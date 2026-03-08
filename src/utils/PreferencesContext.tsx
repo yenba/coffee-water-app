@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
+import type { Recipe } from "../data/recipes";
 
 export type Unit = "liters" | "gallons";
 export type Theme = "system" | "light" | "dark";
@@ -10,6 +11,11 @@ interface PreferencesContextType {
     setUnit: (unit: Unit) => void;
     theme: Theme;
     setTheme: (theme: Theme) => void;
+    customRecipes: Recipe[];
+    addCustomRecipe: (recipe: Recipe) => void;
+    removeCustomRecipe: (recipeName: string) => void;
+    exportData: () => string;
+    importData: (dataString: string) => boolean;
     resetToDefaults: () => void;
 }
 
@@ -29,6 +35,15 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         return (saved as Theme) || DEFAULT_THEME;
     });
 
+    const [customRecipes, setCustomRecipesState] = useState<Recipe[]>(() => {
+        const saved = localStorage.getItem("coffee_water_recipes");
+        try {
+            return saved ? JSON.parse(saved) : [];
+        } catch (e) {
+            return [];
+        }
+    });
+
     const setUnit = (newUnit: Unit) => {
         setUnitState(newUnit);
         localStorage.setItem("coffee_water_unit", newUnit);
@@ -39,9 +54,48 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         localStorage.setItem("coffee_water_theme", newTheme);
     };
 
+    const addCustomRecipe = (recipe: Recipe) => {
+        const newRecipes = [...customRecipes.filter((r) => r.name !== recipe.name), recipe];
+        setCustomRecipesState(newRecipes);
+        localStorage.setItem("coffee_water_recipes", JSON.stringify(newRecipes));
+    };
+
+    const removeCustomRecipe = (recipeName: string) => {
+        const newRecipes = customRecipes.filter((r) => r.name !== recipeName);
+        setCustomRecipesState(newRecipes);
+        localStorage.setItem("coffee_water_recipes", JSON.stringify(newRecipes));
+    };
+
+    const exportData = () => {
+        const data = {
+            unit,
+            theme,
+            customRecipes,
+        };
+        return btoa(JSON.stringify(data));
+    };
+
+    const importData = (dataString: string) => {
+        try {
+            const data = JSON.parse(atob(dataString));
+            if (data.unit) setUnit(data.unit);
+            if (data.theme) setTheme(data.theme);
+            if (data.customRecipes && Array.isArray(data.customRecipes)) {
+                setCustomRecipesState(data.customRecipes);
+                localStorage.setItem("coffee_water_recipes", JSON.stringify(data.customRecipes));
+            }
+            return true;
+        } catch (e) {
+            console.error("Failed to import data", e);
+            return false;
+        }
+    };
+
     const resetToDefaults = () => {
         setUnit(DEFAULT_UNIT);
         setTheme(DEFAULT_THEME);
+        setCustomRecipesState([]);
+        localStorage.setItem("coffee_water_recipes", JSON.stringify([]));
     };
 
     // Handle Theme application
@@ -85,13 +139,26 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         const handleStorage = (e: StorageEvent) => {
             if (e.key === "coffee_water_unit") setUnitState((e.newValue as Unit) || DEFAULT_UNIT);
             if (e.key === "coffee_water_theme") setThemeState((e.newValue as Theme) || DEFAULT_THEME);
+            if (e.key === "coffee_water_recipes") {
+                try {
+                    setCustomRecipesState(e.newValue ? JSON.parse(e.newValue) : []);
+                } catch (err) {
+                    setCustomRecipesState([]);
+                }
+            }
         };
         window.addEventListener("storage", handleStorage);
         return () => window.removeEventListener("storage", handleStorage);
     }, []);
 
     return (
-        <PreferencesContext.Provider value={{ unit, setUnit, theme, setTheme, resetToDefaults }}>
+        <PreferencesContext.Provider value={{
+            unit, setUnit,
+            theme, setTheme,
+            customRecipes, addCustomRecipe, removeCustomRecipe,
+            exportData, importData,
+            resetToDefaults
+        }}>
             {children}
         </PreferencesContext.Provider>
     );

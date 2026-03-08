@@ -8,13 +8,16 @@ import NumberInput from "../components/NumberInput";
 import ResultCard from "../components/ResultCard";
 
 export default function RecipePicker() {
-  const { unit, setUnit } = usePreferences();
+  const { unit, setUnit, customRecipes, removeCustomRecipe } = usePreferences();
   const [waterAmount, setWaterAmount] = useState(1.0);
   const [recipeIndex, setRecipeIndex] = useState(2); // Fams 20/80
   const [hardnessSaltId, setHardnessSaltId] = useState("epsom-salt");
   const [bufferSaltId, setBufferSaltId] = useState("baking-soda");
 
-  const recipe = RECIPES[recipeIndex];
+  const allRecipes = useMemo(() => [...RECIPES, ...customRecipes], [customRecipes]);
+  const currentRecipeIndex = recipeIndex < allRecipes.length ? recipeIndex : 0;
+  const recipe = allRecipes[currentRecipeIndex];
+  const isCustomRecipe = currentRecipeIndex >= RECIPES.length;
   const hardnessSalt = getSaltById(hardnessSaltId)!;
   const bufferSalt = getSaltById(bufferSaltId)!;
 
@@ -62,17 +65,43 @@ export default function RecipePicker() {
           <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
             Select a Recipe
           </label>
-          <select
-            value={recipeIndex}
-            onChange={(e) => setRecipeIndex(parseInt(e.target.value))}
-            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
-          >
-            {RECIPES.map((r, i) => (
-              <option key={r.name} value={i}>
-                {r.name}
-              </option>
-            ))}
-          </select>
+          <div className="flex gap-2">
+            <select
+              value={currentRecipeIndex}
+              onChange={(e) => setRecipeIndex(parseInt(e.target.value))}
+              className="flex-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+            >
+              <optgroup label="Default Recipes">
+                {RECIPES.map((r, i) => (
+                  <option key={r.name} value={i}>
+                    {r.name}
+                  </option>
+                ))}
+              </optgroup>
+              {customRecipes.length > 0 && (
+                <optgroup label="Custom Recipes">
+                  {customRecipes.map((r, i) => (
+                    <option key={r.name} value={RECIPES.length + i}>
+                      {r.name}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
+            </select>
+            {isCustomRecipe && (
+              <button
+                type="button"
+                onClick={() => {
+                  removeCustomRecipe(recipe.name);
+                  setRecipeIndex(0);
+                }}
+                className="rounded-lg bg-red-100 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 transition-colors"
+                title="Delete this custom recipe"
+              >
+                Delete
+              </button>
+            )}
+          </div>
         </div>
 
         <SolutionSelect
