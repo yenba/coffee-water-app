@@ -35,8 +35,11 @@ export default function Sidebar() {
         <>
             {/* Mobile Header (visible only on narrow screens) */}
             <div className="sticky top-0 z-20 flex h-14 shrink-0 items-center justify-between border-b border-gray-200 bg-white/90 px-4 backdrop-blur md:hidden dark:border-slate-800 dark:bg-slate-900/90">
-                <NavLink to="/" className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">
-                    coffee<span className="text-sky-500 dark:text-sky-400">water</span>
+                <NavLink to="/" className="flex items-center gap-2 text-lg font-bold tracking-tight text-gray-900 dark:text-white">
+                    <img src="/favicon.svg" alt="Logo" className="h-6 w-6" />
+                    <div>
+                        coffee<span className="text-sky-500 dark:text-sky-400">water</span>
+                    </div>
                 </NavLink>
                 <button
                     type="button"
@@ -62,8 +65,11 @@ export default function Sidebar() {
                     }`}
             >
                 <div className="hidden h-16 shrink-0 items-center px-6 md:flex">
-                    <NavLink to="/" className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                        coffee<span className="text-sky-500 dark:text-sky-400">water</span>
+                    <NavLink to="/" className="flex items-center gap-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+                        <img src="/favicon.svg" alt="Logo" className="h-7 w-7" />
+                        <div>
+                            coffee<span className="text-sky-500 dark:text-sky-400">water</span>
+                        </div>
                     </NavLink>
                 </div>
 
