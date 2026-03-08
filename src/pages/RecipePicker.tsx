@@ -33,7 +33,7 @@ export default function RecipePicker() {
       <div>
         <h1 className="text-xl font-bold">Easy Direct Dosing Recipe Picker</h1>
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          Take 0 or Low TDS water, add minerals, shake!
+          Take Zero or Low TDS water, add minerals, shake!
         </p>
       </div>
 

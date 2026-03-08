@@ -30,7 +30,7 @@ export default function GHKHLookup() {
       <div>
         <h1 className="text-xl font-bold">Custom Direct Dosing GH / KH Lookup</h1>
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          Take 0 or Low TDS water, add minerals, shake!
+          Take Zero or Low TDS water, add minerals, shake!
         </p>
       </div>
 
