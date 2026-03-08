@@ -32,13 +32,12 @@ npm run build
 
 - [Espresso Aficionados Discord](https://discord.gg/espresso)
 - [Jonathan Gagné — Water for Coffee Extraction](https://coffeeadastra.com/2018/12/16/water-for-coffee-extraction/)
-- [The Espresso School — DIY Coffee Brew Water Calculators](https://www.espressoschool.com.au/coffee-water-calculators/)
 - [Espresso Aficionados — Water](https://espressoaf.com/guides/water.html)
 - [Barista Hustle — DIY Water Recipes Redux](https://www.baristahustle.com/blog/diy-water-recipes-redux/)
 
 ## Credits
 
-Created by **yenba**, made possible by the fantastic work of:
+Made possible by the fantastic work of:
 - **Sagebush** — Espresso Aficionados Discord
 - **David Seng / The Espresso School**
 - **Jonathan Gagné**

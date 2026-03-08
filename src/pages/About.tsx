@@ -30,16 +30,16 @@ function ExtLink({ href, children }: { href: string; children: React.ReactNode }
 
 export default function About() {
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div>
         <h1 className="text-xl font-bold">About</h1>
-        <p className="text-sm text-gray-400">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           Direct Dosing Recipe Picker & Calculator
         </p>
       </div>
 
-      <div className="space-y-6 rounded-xl border border-slate-800 bg-slate-900 p-5">
-        <p className="text-gray-300">
+      <div className="space-y-4 rounded-xl border border-gray-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+        <p className="text-gray-700 dark:text-gray-300">
           This tool helps you calculate how much dry mineral salt to add
           directly into water to achieve specific water hardness (GH) and
           alkalinity (KH) levels for brewing coffee. All calculations happen
@@ -47,9 +47,9 @@ export default function About() {
         </p>
 
         <Section title="How to Use">
-          <div className="space-y-4 text-sm text-gray-300">
+          <div className="space-y-4 text-sm text-gray-700 dark:text-gray-300">
             <div>
-              <h3 className="mb-1 font-semibold text-white">
+              <h3 className="mb-1 font-semibold text-gray-900 dark:text-white">
                 <Link to="/" className="hover:text-sky-400">
                   Recipe Picker
                 </Link>
@@ -62,7 +62,7 @@ export default function About() {
             </div>
 
             <div>
-              <h3 className="mb-1 font-semibold text-white">
+              <h3 className="mb-1 font-semibold text-gray-900 dark:text-white">
                 <Link to="/chart" className="hover:text-sky-400">
                   Recipe Chart
                 </Link>
@@ -75,7 +75,7 @@ export default function About() {
             </div>
 
             <div>
-              <h3 className="mb-1 font-semibold text-white">
+              <h3 className="mb-1 font-semibold text-gray-900 dark:text-white">
                 <Link to="/custom" className="hover:text-sky-400">
                   Custom Recipe Creator
                 </Link>
@@ -88,7 +88,7 @@ export default function About() {
             </div>
 
             <div>
-              <h3 className="mb-1 font-semibold text-white">
+              <h3 className="mb-1 font-semibold text-gray-900 dark:text-white">
                 <Link to="/lookup" className="hover:text-sky-400">
                   GH/KH Lookup
                 </Link>
@@ -102,7 +102,7 @@ export default function About() {
         </Section>
 
         <Section title="Links & Resources">
-          <ul className="space-y-2 text-sm text-gray-300">
+          <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
             <li>
               <ExtLink href="https://discord.gg/espresso">
                 Espresso Aficionados Discord
@@ -111,11 +111,6 @@ export default function About() {
             <li>
               <ExtLink href="https://coffeeadastra.com/2018/12/16/water-for-coffee-extraction/">
                 Jonathan Gagné — Water for Coffee Extraction
-              </ExtLink>
-            </li>
-            <li>
-              <ExtLink href="https://www.espressoschool.com.au/coffee-water-calculators/">
-                The Espresso School — DIY Coffee Brew Water Calculators
               </ExtLink>
             </li>
             <li>
@@ -132,18 +127,16 @@ export default function About() {
         </Section>
 
         <Section title="Credits">
-          <p className="text-sm text-gray-300">
-            Created by yenba, made possible by the fantastic work of:
+          <p className="text-sm text-gray-700 dark:text-gray-300">
+            Made possible by the fantastic work of:
           </p>
-          <ul className="space-y-1 text-sm text-gray-300">
+          <ul className="space-y-1 text-sm text-gray-700 dark:text-gray-300">
             <li>
-              <span className="text-white">Sagebush</span> — Espresso
+              <span className="text-gray-900 dark:text-white">Sagebush</span> — Espresso
               Aficionados Discord
             </li>
             <li>
-              <ExtLink href="https://www.espressoschool.com.au/coffee-water-calculators/">
-                David Seng / The Espresso School
-              </ExtLink>
+              <span className="text-gray-900 dark:text-white">David Seng / The Espresso School</span>
             </li>
             <li>
               <ExtLink href="https://coffeeadastra.com/">
@@ -151,7 +144,7 @@ export default function About() {
               </ExtLink>
             </li>
           </ul>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             Huge thanks to y'all for doing the hard math and science!
           </p>
         </Section>
