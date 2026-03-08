@@ -32,7 +32,7 @@ export default function RecipeChart() {
       <div>
         <h1 className="text-xl font-bold">Easy Direct Dosing Recipe Chart</h1>
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          Using dry ingredients put directly into water
+          Take 0 or Low TDS water, add minerals, shake!
         </p>
       </div>
 
