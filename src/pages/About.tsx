@@ -40,7 +40,7 @@ export default function About() {
 
       <div className="space-y-4 rounded-xl border border-gray-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
         <p className="text-gray-700 dark:text-gray-300">
-          This tool helps you calculate how much dry mineral salt to add
+          This tool helps you calculate how many minerals to add
           directly into water to achieve specific water hardness (GH) and
           alkalinity (KH) levels for brewing coffee. All calculations happen
           instantly in your browser — no data is sent anywhere.
@@ -57,7 +57,7 @@ export default function About() {
               <p>
                 Pick a well-known water recipe from the dropdown and choose your
                 desired water amount. The calculator tells you exactly how many
-                grams of each salt to add.
+                grams of each mineral to add.
               </p>
             </div>
 
@@ -69,7 +69,7 @@ export default function About() {
               </h3>
               <p>
                 View all recipes at once in a table, showing the grams needed
-                for your selected water volume and salt choices. Great for
+                for your selected water volume and mineral choices. Great for
                 comparing recipes side by side.
               </p>
             </div>
@@ -82,7 +82,7 @@ export default function About() {
               </h3>
               <p>
                 Create your own recipe by entering your desired GH and KH
-                values. The calculator figures out how much of each salt you
+                values. The calculator figures out how much of each mineral you
                 need.
               </p>
             </div>
@@ -94,7 +94,7 @@ export default function About() {
                 </Link>
               </h3>
               <p>
-                The reverse calculator — enter the grams of salt you used and
+                The reverse calculator — enter the grams you used and
                 it tells you the resulting GH and KH of your water.
               </p>
             </div>
