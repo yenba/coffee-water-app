@@ -1,14 +1,14 @@
 import { useState, useMemo } from "react";
 import { EASY_HARDNESS_SALTS, EASY_BUFFER_SALTS, getSaltById } from "../data/salts";
 import { RECIPES } from "../data/recipes";
-import { calcGrams, toliters, formatNumber, type Unit } from "../utils/calculations";
-import UnitToggle from "../components/UnitToggle";
+import { calcGrams, toliters, formatNumber } from "../utils/calculations";
+import { usePreferences } from "../utils/PreferencesContext";
 import SolutionSelect from "../components/SolutionSelect";
 import NumberInput from "../components/NumberInput";
 import ResultCard from "../components/ResultCard";
 
 export default function RecipePicker() {
-  const [unit, setUnit] = useState<Unit>("gallons");
+  const { unit, setUnit } = usePreferences();
   const [waterAmount, setWaterAmount] = useState(1.0);
   const [recipeIndex, setRecipeIndex] = useState(2); // Fams 20/80
   const [hardnessSaltId, setHardnessSaltId] = useState("epsom-salt");
@@ -40,9 +40,15 @@ export default function RecipePicker() {
       <div className="space-y-4 rounded-xl border border-gray-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-            Units
+            Unit: <strong className="capitalize text-sky-500 dark:text-sky-400">{unit}</strong>
           </span>
-          <UnitToggle value={unit} onChange={setUnit} />
+          <button
+            type="button"
+            onClick={() => setUnit(unit === "liters" ? "gallons" : "liters")}
+            className="text-xs text-sky-500 hover:underline dark:text-sky-400 cursor-pointer"
+          >
+            Change
+          </button>
         </div>
 
         <NumberInput
