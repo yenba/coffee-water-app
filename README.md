@@ -1,73 +1,46 @@
-# React + TypeScript + Vite
+# Coffee Water App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Direct Dosing Recipe Picker & Calculator** for brewers who build their own coffee water.
 
-Currently, two official plugins are available:
+This tool helps you calculate how much dry mineral salt to add directly into water to achieve specific water hardness (GH) and alkalinity (KH) levels for brewing coffee. All calculations happen instantly in your browser — no data is sent anywhere.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+- **Recipe Picker**: Pick a well-known water recipe from the dropdown and choose your desired water amount. The calculator tells you exactly how many grams of each salt to add.
+- **Recipe Chart**: View all recipes at once in a table, showing the grams needed for your selected water volume and salt choices. Great for comparing recipes side by side.
+- **Custom Recipe Creator**: Create your own recipe by entering your desired GH and KH values. The calculator figures out how much of each salt you need.
+- **GH/KH Lookup**: The reverse calculator — enter the grams of salt you used and it tells you the resulting GH and KH of your water.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Development
 
-## Expanding the ESLint configuration
+This is a React application built with TypeScript and Vite. It uses Tailwind CSS for styling.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Setup
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+```bash
+# Install dependencies
+npm install
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+# Start the development server
+npm run dev
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Build for production
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Links & Resources
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- [Espresso Aficionados Discord](https://discord.gg/espresso)
+- [Jonathan Gagné — Water for Coffee Extraction](https://coffeeadastra.com/2018/12/16/water-for-coffee-extraction/)
+- [The Espresso School — DIY Coffee Brew Water Calculators](https://www.espressoschool.com.au/coffee-water-calculators/)
+- [Espresso Aficionados — Water](https://espressoaf.com/guides/water.html)
+- [Barista Hustle — DIY Water Recipes Redux](https://www.baristahustle.com/blog/diy-water-recipes-redux/)
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Credits
+
+Created by **yenba**, made possible by the fantastic work of:
+- **Sagebush** — Espresso Aficionados Discord
+- **David Seng / The Espresso School**
+- **Jonathan Gagné**
+
+Huge thanks to y'all for doing the hard math and science!
