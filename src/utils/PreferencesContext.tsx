@@ -14,7 +14,7 @@ interface PreferencesContextType {
 }
 
 const DEFAULT_UNIT: Unit = "liters";
-const DEFAULT_THEME: Theme = "system";
+const DEFAULT_THEME: Theme = "dark";
 
 const PreferencesContext = createContext<PreferencesContextType | undefined>(undefined);
 
