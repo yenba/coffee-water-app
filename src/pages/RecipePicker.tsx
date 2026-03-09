@@ -7,6 +7,7 @@ import { usePreferences } from "../utils/PreferencesContext";
 import SolutionSelect from "../components/SolutionSelect";
 import WaterAmountInput from "../components/WaterAmountInput";
 import CopyRecipeButton from "../components/CopyRecipeButton";
+import ShareLinkButton from "../components/ShareLinkButton";
 
 export default function RecipePicker() {
   const navigate = useNavigate();
@@ -228,25 +229,31 @@ export default function RecipePicker() {
 
               <div className="mt-auto space-y-3 pt-4 border-t border-gray-100 dark:border-slate-800">
                 <div className="flex justify-between items-end mb-2">
-                  <CopyRecipeButton
-                      recipe={recipe}
-                      waterAmount={waterAmount}
-                      unit={unit}
-                      hardnessSalt={hardnessSalt}
-                      bufferSalt={bufferSalt}
-                      hGrams={hGrams}
-                      bGrams={bGrams}
-                  />
+                  <div className="flex gap-1.5">
+                    <CopyRecipeButton
+                        recipe={recipe}
+                        waterAmount={waterAmount}
+                        unit={unit}
+                        hardnessSalt={hardnessSalt}
+                        bufferSalt={bufferSalt}
+                        hGrams={hGrams}
+                        bGrams={bGrams}
+                    />
+                    <ShareLinkButton recipe={recipe} />
+                  </div>
+                  <span className="text-xs text-gray-400 dark:text-gray-500">
+                    {formatNumber(waterAmount, 1)} {unit === "liters" ? "L" : "gal"}
+                  </span>
                 </div>
                 <div className="flex justify-between items-end">
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Hardness <span className="text-[10px]">({hardnessSalt.commonName})</span>:</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">{hardnessSalt.commonName} <span className="text-[10px]">(hardness)</span></span>
                   <div className="text-right">
                     <span className="text-lg font-bold text-sky-500 dark:text-sky-400">{formatNumber(hGrams)}</span>
                     <span className="text-xs text-gray-400 ml-1">g</span>
                   </div>
                 </div>
                 <div className="flex justify-between items-end">
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Buffer <span className="text-[10px]">({bufferSalt.commonName})</span>:</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">{bufferSalt.commonName} <span className="text-[10px]">(buffer)</span></span>
                   <div className="text-right">
                     <span className="text-lg font-bold text-violet-500 dark:text-violet-400">{formatNumber(bGrams)}</span>
                     <span className="text-xs text-gray-400 ml-1">g</span>
