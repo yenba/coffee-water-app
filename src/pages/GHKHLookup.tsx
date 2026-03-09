@@ -1,18 +1,21 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { HARDNESS_SALTS, BUFFER_SALTS, getSaltById } from "../data/salts";
 import { calcGHKH, toliters, formatNumber } from "../utils/calculations";
 import { usePreferences } from "../utils/PreferencesContext";
+import { usePersistedState } from "../utils/usePersistedState";
 import SolutionSelect from "../components/SolutionSelect";
 import NumberInput from "../components/NumberInput";
 import WaterAmountInput from "../components/WaterAmountInput";
 
 export default function GHKHLookup() {
-  const { unit, setUnit } = usePreferences();
-  const [waterAmount, setWaterAmount] = useState(10.0);
-  const [hardnessSaltId, setHardnessSaltId] = useState("epsom-salt");
-  const [bufferSaltId, setBufferSaltId] = useState("baking-soda");
-  const [hardnessGrams, setHardnessGrams] = useState(1.97);
-  const [bufferGrams, setBufferGrams] = useState(0.671);
+  const {
+    unit, setUnit,
+    waterAmount, setWaterAmount,
+    hardnessSaltId, setHardnessSaltId,
+    bufferSaltId, setBufferSaltId,
+  } = usePreferences();
+  const [hardnessGrams, setHardnessGrams] = usePersistedState("coffee_water_lookup_hardness_grams", 1.97);
+  const [bufferGrams, setBufferGrams] = usePersistedState("coffee_water_lookup_buffer_grams", 0.671);
 
   const hardnessSalt = getSaltById(hardnessSaltId)!;
   const bufferSalt = getSaltById(bufferSaltId)!;

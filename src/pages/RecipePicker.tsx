@@ -1,9 +1,10 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { HARDNESS_SALTS, BUFFER_SALTS, getSaltById } from "../data/salts";
 import { RECIPES } from "../data/recipes";
 import { calcGrams, toliters, formatNumber } from "../utils/calculations";
 import { useNavigate } from "react-router-dom";
 import { usePreferences } from "../utils/PreferencesContext";
+import { usePersistedState } from "../utils/usePersistedState";
 import SolutionSelect from "../components/SolutionSelect";
 import WaterAmountInput from "../components/WaterAmountInput";
 import CopyRecipeButton from "../components/CopyRecipeButton";
@@ -11,16 +12,19 @@ import ShareLinkButton from "../components/ShareLinkButton";
 
 export default function RecipePicker() {
   const navigate = useNavigate();
-  const { unit, setUnit, customRecipes, removeCustomRecipe } = usePreferences();
-  const [waterAmount, setWaterAmount] = useState(1.0);
-  const [hardnessSaltId, setHardnessSaltId] = useState("epsom-salt");
-  const [bufferSaltId, setBufferSaltId] = useState("baking-soda");
+  const {
+    unit, setUnit,
+    waterAmount, setWaterAmount,
+    hardnessSaltId, setHardnessSaltId,
+    bufferSaltId, setBufferSaltId,
+    customRecipes, removeCustomRecipe,
+  } = usePreferences();
 
-  // Sorting and Filtering State
-  const [sortBy, setSortBy] = useState<"name" | "gh-asc" | "gh-desc" | "kh-asc" | "kh-desc">("gh-asc");
-  const [showCustomFirst, setShowCustomFirst] = useState(true);
-  const [maxGH, setMaxGH] = useState<number>(300);
-  const [maxKH, setMaxKH] = useState<number>(300);
+  // Sorting and Filtering State (persisted per-page)
+  const [sortBy, setSortBy] = usePersistedState<"name" | "gh-asc" | "gh-desc" | "kh-asc" | "kh-desc">("coffee_water_picker_sort", "gh-asc");
+  const [showCustomFirst, setShowCustomFirst] = usePersistedState("coffee_water_picker_custom_first", true);
+  const [maxGH, setMaxGH] = usePersistedState("coffee_water_picker_max_gh", 300);
+  const [maxKH, setMaxKH] = usePersistedState("coffee_water_picker_max_kh", 300);
 
   const allRecipes = useMemo(() => [...RECIPES, ...customRecipes], [customRecipes]);
   const hardnessSalt = getSaltById(hardnessSaltId)!;

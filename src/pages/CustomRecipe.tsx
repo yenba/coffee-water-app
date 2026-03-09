@@ -1,26 +1,36 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { HARDNESS_SALTS, BUFFER_SALTS, getSaltById } from "../data/salts";
 import { calcGrams, toliters, formatNumber } from "../utils/calculations";
 import { usePreferences } from "../utils/PreferencesContext";
+import { usePersistedState } from "../utils/usePersistedState";
 import { useSearchParams } from "react-router-dom";
 import SolutionSelect from "../components/SolutionSelect";
 import NumberInput from "../components/NumberInput";
 import WaterAmountInput from "../components/WaterAmountInput";
 export default function CustomRecipe() {
-  const { unit, setUnit, addCustomRecipe } = usePreferences();
+  const {
+    unit, setUnit,
+    waterAmount, setWaterAmount,
+    hardnessSaltId, setHardnessSaltId,
+    bufferSaltId, setBufferSaltId,
+    addCustomRecipe,
+  } = usePreferences();
   const [searchParams] = useSearchParams();
 
-  const initialName = searchParams.get("name") || "";
-  const initialGH = searchParams.get("gh") ? parseFloat(searchParams.get("gh")!) : 30.0;
-  const initialKH = searchParams.get("kh") ? parseFloat(searchParams.get("kh")!) : 70.0;
-
-  const [waterAmount, setWaterAmount] = useState(1.0);
-  const [hardnessSaltId, setHardnessSaltId] = useState("epsom-salt");
-  const [bufferSaltId, setBufferSaltId] = useState("baking-soda");
-  const [desiredGH, setDesiredGH] = useState(initialGH);
-  const [desiredKH, setDesiredKH] = useState(initialKH);
-  const [recipeName, setRecipeName] = useState(initialName);
+  const [desiredGH, setDesiredGH] = usePersistedState("coffee_water_custom_gh", 30.0);
+  const [desiredKH, setDesiredKH] = usePersistedState("coffee_water_custom_kh", 70.0);
+  const [recipeName, setRecipeName] = useState(searchParams.get("name") || "");
   const [saveStatus, setSaveStatus] = useState<"idle" | "success">("idle");
+
+  // URL params override persisted values (for share links and edit flows)
+  useEffect(() => {
+    const urlGH = searchParams.get("gh");
+    const urlKH = searchParams.get("kh");
+    const urlName = searchParams.get("name");
+    if (urlGH) setDesiredGH(parseFloat(urlGH));
+    if (urlKH) setDesiredKH(parseFloat(urlKH));
+    if (urlName) setRecipeName(urlName);
+  }, [searchParams, setDesiredGH, setDesiredKH]);
   const handleSaveRecipe = () => {
     if (!recipeName.trim()) return;
     addCustomRecipe({
