@@ -2,11 +2,14 @@ import { useState, useMemo } from "react";
 import { HARDNESS_SALTS, BUFFER_SALTS, getSaltById } from "../data/salts";
 import { RECIPES } from "../data/recipes";
 import { calcGrams, toliters, formatNumber } from "../utils/calculations";
+import { useNavigate } from "react-router-dom";
 import { usePreferences } from "../utils/PreferencesContext";
 import SolutionSelect from "../components/SolutionSelect";
 import WaterAmountInput from "../components/WaterAmountInput";
+import CopyRecipeButton from "../components/CopyRecipeButton";
 
 export default function RecipePicker() {
+  const navigate = useNavigate();
   const { unit, setUnit, customRecipes, removeCustomRecipe } = usePreferences();
   const [waterAmount, setWaterAmount] = useState(1.0);
   const [hardnessSaltId, setHardnessSaltId] = useState("epsom-salt");
@@ -25,7 +28,7 @@ export default function RecipePicker() {
 
   const displayRecipes = useMemo(() => {
     // 1. Filter
-    let filtered = allRecipes.filter(r => r.gh <= maxGH && r.kh <= maxKH);
+    const filtered = allRecipes.filter(r => r.gh <= maxGH && r.kh <= maxKH);
 
     // 2. Sort
     filtered.sort((a, b) => {
@@ -107,7 +110,7 @@ export default function RecipePicker() {
           <label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">Sort By:</label>
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
+            onChange={(e) => setSortBy(e.target.value as "name" | "gh-asc" | "gh-desc" | "kh-asc" | "kh-desc")}
             className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-800 w-40"
           >
             <option value="name">Name (A-Z)</option>
@@ -187,14 +190,30 @@ export default function RecipePicker() {
                   {recipe.name}
                 </h2>
                 {isCustom && (
-                  <button
-                    type="button"
-                    onClick={() => removeCustomRecipe(recipe.name)}
-                    className="text-red-400 hover:text-red-600 dark:text-red-500 dark:hover:text-red-400 transition-colors shrink-0 p-1 rounded-md hover:bg-red-50 dark:hover:bg-red-900/30"
-                    title="Delete Custom Recipe"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" /></svg>
-                  </button>
+                  <div className="flex gap-1 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const searchParams = new URLSearchParams();
+                        searchParams.set("name", recipe.name);
+                        searchParams.set("gh", recipe.gh.toString());
+                        searchParams.set("kh", recipe.kh.toString());
+                        navigate(`/custom?${searchParams.toString()}`);
+                      }}
+                      className="text-sky-400 hover:text-sky-600 dark:text-sky-500 dark:hover:text-sky-400 transition-colors p-1 rounded-md hover:bg-sky-50 dark:hover:bg-sky-900/30"
+                      title="Edit Custom Recipe"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => removeCustomRecipe(recipe.name)}
+                      className="text-red-400 hover:text-red-600 dark:text-red-500 dark:hover:text-red-400 transition-colors p-1 rounded-md hover:bg-red-50 dark:hover:bg-red-900/30"
+                      title="Delete Custom Recipe"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" /></svg>
+                    </button>
+                  </div>
                 )}
               </div>
 
@@ -208,6 +227,17 @@ export default function RecipePicker() {
               </div>
 
               <div className="mt-auto space-y-3 pt-4 border-t border-gray-100 dark:border-slate-800">
+                <div className="flex justify-between items-end mb-2">
+                  <CopyRecipeButton
+                      recipe={recipe}
+                      waterAmount={waterAmount}
+                      unit={unit}
+                      hardnessSalt={hardnessSalt}
+                      bufferSalt={bufferSalt}
+                      hGrams={hGrams}
+                      bGrams={bGrams}
+                  />
+                </div>
                 <div className="flex justify-between items-end">
                   <span className="text-sm text-gray-500 dark:text-gray-400">Hardness <span className="text-[10px] hidden lg:inline">({hardnessSalt.commonName})</span>:</span>
                   <div className="text-right">

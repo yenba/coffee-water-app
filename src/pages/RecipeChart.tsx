@@ -6,18 +6,22 @@ import { usePreferences } from "../utils/PreferencesContext";
 import SolutionSelect from "../components/SolutionSelect";
 import NumberInput from "../components/NumberInput";
 
+type SortField = "name" | "gh" | "kh" | "hardnessGrams" | "bufferGrams";
+
 export default function RecipeChart() {
   const { unit, setUnit } = usePreferences();
   const [waterAmount, setWaterAmount] = useState(10.0);
   const [hardnessSaltId, setHardnessSaltId] = useState("epsom-salt");
   const [bufferSaltId, setBufferSaltId] = useState("baking-soda");
+  const [sortField, setSortField] = useState<SortField>("gh");
+  const [sortAsc, setSortAsc] = useState(true);
 
   const hardnessSalt = getSaltById(hardnessSaltId)!;
   const bufferSalt = getSaltById(bufferSaltId)!;
 
   const rows = useMemo(() => {
     const waterLiters = toliters(waterAmount, unit);
-    return RECIPES.map((recipe) => ({
+    const data = RECIPES.map((recipe) => ({
       name: recipe.name,
       waterLabel: `${waterAmount} ${unit === "liters" ? "Liters" : "Gallons"}`,
       gh: recipe.gh,
@@ -25,7 +29,35 @@ export default function RecipeChart() {
       hardnessGrams: calcGrams(hardnessSalt.calcAmount, recipe.gh, waterLiters),
       bufferGrams: calcGrams(bufferSalt.calcAmount, recipe.kh, waterLiters),
     }));
-  }, [unit, waterAmount, hardnessSalt, bufferSalt]);
+
+    data.sort((a, b) => {
+        const valA = a[sortField];
+        const valB = b[sortField];
+
+        if (typeof valA === "string" && typeof valB === "string") {
+            return sortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        } else if (typeof valA === "number" && typeof valB === "number") {
+            return sortAsc ? valA - valB : valB - valA;
+        }
+        return 0;
+    });
+
+    return data;
+  }, [unit, waterAmount, hardnessSalt, bufferSalt, sortField, sortAsc]);
+
+  const handleSort = (field: SortField) => {
+      if (sortField === field) {
+          setSortAsc(!sortAsc);
+      } else {
+          setSortField(field);
+          setSortAsc(true);
+      }
+  };
+
+  const renderSortIcon = (field: SortField) => {
+      if (sortField !== field) return <span className="text-gray-500 opacity-50 ml-1">↕</span>;
+      return <span className="text-sky-400 ml-1">{sortAsc ? "↑" : "↓"}</span>;
+  };
 
   return (
     <div className="space-y-6">
@@ -76,15 +108,21 @@ export default function RecipeChart() {
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-slate-800 text-white dark:bg-slate-800">
-              <th className="px-3 py-2 text-left font-semibold">Recipe</th>
-              <th className="px-3 py-2 text-right font-semibold">Water</th>
-              <th className="px-3 py-2 text-right font-semibold">GH</th>
-              <th className="px-3 py-2 text-right font-semibold">KH</th>
-              <th className="px-3 py-2 text-right font-semibold">
-                {hardnessSalt.commonName} (g)
+              <th className="px-3 py-2 text-left font-semibold cursor-pointer hover:bg-slate-700 transition-colors" onClick={() => handleSort("name")}>
+                Recipe {renderSortIcon("name")}
               </th>
-              <th className="px-3 py-2 text-right font-semibold">
-                {bufferSalt.commonName} (g)
+              <th className="px-3 py-2 text-right font-semibold">Water</th>
+              <th className="px-3 py-2 text-right font-semibold cursor-pointer hover:bg-slate-700 transition-colors" onClick={() => handleSort("gh")}>
+                GH {renderSortIcon("gh")}
+              </th>
+              <th className="px-3 py-2 text-right font-semibold cursor-pointer hover:bg-slate-700 transition-colors" onClick={() => handleSort("kh")}>
+                KH {renderSortIcon("kh")}
+              </th>
+              <th className="px-3 py-2 text-right font-semibold cursor-pointer hover:bg-slate-700 transition-colors" onClick={() => handleSort("hardnessGrams")}>
+                {hardnessSalt.commonName} (g) {renderSortIcon("hardnessGrams")}
+              </th>
+              <th className="px-3 py-2 text-right font-semibold cursor-pointer hover:bg-slate-700 transition-colors" onClick={() => handleSort("bufferGrams")}>
+                {bufferSalt.commonName} (g) {renderSortIcon("bufferGrams")}
               </th>
             </tr>
           </thead>
