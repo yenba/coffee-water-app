@@ -1,11 +1,13 @@
 import { useState } from "react";
+import { useRef } from "react";
 import { usePreferences, type Theme } from "../utils/PreferencesContext";
 
 export default function Preferences() {
-    const { unit, setUnit, theme, setTheme, resetToDefaults, exportData, importData } = usePreferences();
+    const { unit, setUnit, theme, setTheme, resetToDefaults, exportData, exportJSON, importData, importJSON } = usePreferences();
     const [importText, setImportText] = useState("");
     const [importStatus, setImportStatus] = useState<"idle" | "success" | "error">("idle");
     const [copied, setCopied] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleCopyExport = async () => {
         try {
@@ -27,6 +29,42 @@ export default function Preferences() {
         } else {
             setImportStatus("error");
             setTimeout(() => setImportStatus("idle"), 3000);
+        }
+    };
+
+    const handleDownloadBackup = () => {
+        const json = exportJSON();
+        const blob = new Blob([json], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `coffee-water-backup-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
+
+    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const content = event.target?.result as string;
+            const success = importJSON(content);
+            if (success) {
+                setImportStatus("success");
+                setTimeout(() => setImportStatus("idle"), 3000);
+            } else {
+                setImportStatus("error");
+                setTimeout(() => setImportStatus("idle"), 3000);
+            }
+        };
+        reader.readAsText(file);
+
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
         }
     };
 
@@ -102,12 +140,44 @@ export default function Preferences() {
                     </div>
 
                     <div className="flex flex-col gap-3">
+                        <div className="flex gap-2">
+                            <button
+                                type="button"
+                                onClick={handleDownloadBackup}
+                                className="rounded-lg bg-sky-500 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-sky-600 transition-all active:scale-95 flex items-center gap-2"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>
+                                Download JSON
+                            </button>
+                            <input
+                                type="file"
+                                accept=".json"
+                                onChange={handleFileUpload}
+                                ref={fileInputRef}
+                                className="hidden"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => fileInputRef.current?.click()}
+                                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all active:scale-95 flex items-center gap-2 dark:border-slate-700 dark:bg-slate-800 dark:text-gray-300 dark:hover:bg-slate-700"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" x2="12" y1="3" y2="15"></line></svg>
+                                Upload JSON
+                            </button>
+                        </div>
+
+                        <div className="relative flex items-center py-2">
+                            <div className="flex-grow border-t border-gray-200 dark:border-slate-700"></div>
+                            <span className="flex-shrink-0 mx-4 text-xs text-gray-400 dark:text-gray-500">OR USE TEXT CODE</span>
+                            <div className="flex-grow border-t border-gray-200 dark:border-slate-700"></div>
+                        </div>
+
                         <button
                             type="button"
                             onClick={handleCopyExport}
-                            className="self-start rounded-lg bg-sky-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-sky-600 transition-all active:scale-95"
+                            className="self-start rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all active:scale-95 dark:border-slate-700 dark:bg-slate-800 dark:text-gray-300 dark:hover:bg-slate-700"
                         >
-                            {copied ? "✓ Copied to Clipboard!" : "Copy Export Data"}
+                            {copied ? "✓ Copied to Clipboard!" : "Copy Export Code"}
                         </button>
 
                         <div className="space-y-2">

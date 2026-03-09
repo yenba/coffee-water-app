@@ -15,7 +15,9 @@ interface PreferencesContextType {
     addCustomRecipe: (recipe: Recipe) => void;
     removeCustomRecipe: (recipeName: string) => void;
     exportData: () => string;
+    exportJSON: () => string;
     importData: (dataString: string) => boolean;
+    importJSON: (dataString: string) => boolean;
     resetToDefaults: () => void;
 }
 
@@ -39,7 +41,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         const saved = localStorage.getItem("coffee_water_recipes");
         try {
             return saved ? JSON.parse(saved) : [];
-        } catch (e) {
+        } catch {
             return [];
         }
     });
@@ -75,6 +77,15 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         return btoa(JSON.stringify(data));
     };
 
+    const exportJSON = () => {
+        const data = {
+            unit,
+            theme,
+            customRecipes,
+        };
+        return JSON.stringify(data, null, 2);
+    };
+
     const importData = (dataString: string) => {
         try {
             const data = JSON.parse(atob(dataString));
@@ -87,6 +98,22 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
             return true;
         } catch (e) {
             console.error("Failed to import data", e);
+            return false;
+        }
+    };
+
+    const importJSON = (dataString: string) => {
+        try {
+            const data = JSON.parse(dataString);
+            if (data.unit) setUnit(data.unit);
+            if (data.theme) setTheme(data.theme);
+            if (data.customRecipes && Array.isArray(data.customRecipes)) {
+                setCustomRecipesState(data.customRecipes);
+                localStorage.setItem("coffee_water_recipes", JSON.stringify(data.customRecipes));
+            }
+            return true;
+        } catch (e) {
+            console.error("Failed to import JSON data", e);
             return false;
         }
     };
@@ -142,7 +169,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
             if (e.key === "coffee_water_recipes") {
                 try {
                     setCustomRecipesState(e.newValue ? JSON.parse(e.newValue) : []);
-                } catch (err) {
+                } catch {
                     setCustomRecipesState([]);
                 }
             }
@@ -156,7 +183,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
             unit, setUnit,
             theme, setTheme,
             customRecipes, addCustomRecipe, removeCustomRecipe,
-            exportData, importData,
+            exportData, exportJSON, importData, importJSON,
             resetToDefaults
         }}>
             {children}

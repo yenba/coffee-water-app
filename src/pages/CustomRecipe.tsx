@@ -2,19 +2,28 @@ import { useState, useMemo } from "react";
 import { HARDNESS_SALTS, BUFFER_SALTS, getSaltById } from "../data/salts";
 import { calcGrams, toliters, formatNumber } from "../utils/calculations";
 import { usePreferences } from "../utils/PreferencesContext";
+import { useSearchParams } from "react-router-dom";
 import SolutionSelect from "../components/SolutionSelect";
 import NumberInput from "../components/NumberInput";
 import WaterAmountInput from "../components/WaterAmountInput";
+import CopyRecipeButton from "../components/CopyRecipeButton";
 
 export default function CustomRecipe() {
   const { unit, setUnit, addCustomRecipe } = usePreferences();
+  const [searchParams] = useSearchParams();
+
+  const initialName = searchParams.get("name") || "";
+  const initialGH = searchParams.get("gh") ? parseFloat(searchParams.get("gh")!) : 30.0;
+  const initialKH = searchParams.get("kh") ? parseFloat(searchParams.get("kh")!) : 70.0;
+
   const [waterAmount, setWaterAmount] = useState(1.0);
   const [hardnessSaltId, setHardnessSaltId] = useState("epsom-salt");
   const [bufferSaltId, setBufferSaltId] = useState("baking-soda");
-  const [desiredGH, setDesiredGH] = useState(30.0);
-  const [desiredKH, setDesiredKH] = useState(70.0);
-  const [recipeName, setRecipeName] = useState("");
+  const [desiredGH, setDesiredGH] = useState(initialGH);
+  const [desiredKH, setDesiredKH] = useState(initialKH);
+  const [recipeName, setRecipeName] = useState(initialName);
   const [saveStatus, setSaveStatus] = useState<"idle" | "success">("idle");
+  const [shareStatus, setShareStatus] = useState<"idle" | "success">("idle");
 
   const handleSaveRecipe = () => {
     if (!recipeName.trim()) return;
@@ -40,6 +49,21 @@ export default function CustomRecipe() {
       bufferGrams: calcGrams(bufferSalt.calcAmount, desiredKH, waterLiters),
     };
   }, [unit, waterAmount, hardnessSalt, bufferSalt, desiredGH, desiredKH]);
+
+  const handleShare = async () => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("name", recipeName || "Custom Recipe");
+    url.searchParams.set("gh", desiredGH.toString());
+    url.searchParams.set("kh", desiredKH.toString());
+
+    try {
+        await navigator.clipboard.writeText(url.toString());
+        setShareStatus("success");
+        setTimeout(() => setShareStatus("idle"), 2000);
+    } catch (err) {
+        console.error("Failed to copy share link", err);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -143,6 +167,39 @@ export default function CustomRecipe() {
 
         {/* Right: Live Results panel */}
         <div className="flex flex-col gap-4 min-w-[220px] lg:min-w-[260px]">
+
+          <div className="flex justify-end gap-2 mb-[-12px] z-10 mr-2">
+            <button
+               type="button"
+               onClick={handleShare}
+               className={`flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors ${shareStatus === "success"
+                       ? "bg-sky-50 text-sky-700 dark:bg-sky-500/10 dark:text-sky-400"
+                       : "bg-gray-50 text-gray-600 hover:bg-gray-100 dark:bg-slate-800 dark:text-gray-400 dark:hover:bg-slate-700"
+                   }`}
+               title="Copy Shareable Link"
+            >
+               {shareStatus === "success" ? (
+                   <>
+                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                       <span>Copied Link!</span>
+                   </>
+               ) : (
+                   <>
+                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                       <span>Share Link</span>
+                   </>
+               )}
+            </button>
+            <CopyRecipeButton
+               recipe={{ name: recipeName || "Custom Recipe", gh: desiredGH, kh: desiredKH }}
+               waterAmount={waterAmount}
+               unit={unit}
+               hardnessSalt={hardnessSalt}
+               bufferSalt={bufferSalt}
+               hGrams={results.hardnessGrams}
+               bGrams={results.bufferGrams}
+            />
+          </div>
 
           {/* GH Result */}
           <div className="flex flex-col flex-1 items-center justify-center rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 relative overflow-hidden">
