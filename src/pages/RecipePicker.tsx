@@ -239,14 +239,14 @@ export default function RecipePicker() {
                   />
                 </div>
                 <div className="flex justify-between items-end">
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Hardness <span className="text-[10px] hidden lg:inline">({hardnessSalt.commonName})</span>:</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Hardness <span className="text-[10px]">({hardnessSalt.commonName})</span>:</span>
                   <div className="text-right">
                     <span className="text-lg font-bold text-sky-500 dark:text-sky-400">{formatNumber(hGrams)}</span>
                     <span className="text-xs text-gray-400 ml-1">g</span>
                   </div>
                 </div>
                 <div className="flex justify-between items-end">
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Buffer <span className="text-[10px] hidden lg:inline">({bufferSalt.commonName})</span>:</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Buffer <span className="text-[10px]">({bufferSalt.commonName})</span>:</span>
                   <div className="text-right">
                     <span className="text-lg font-bold text-violet-500 dark:text-violet-400">{formatNumber(bGrams)}</span>
                     <span className="text-xs text-gray-400 ml-1">g</span>

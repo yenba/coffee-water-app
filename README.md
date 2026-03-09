@@ -7,8 +7,7 @@ This tool helps you calculate how many minerals to add directly into water to ac
 ## Features
 
 - **Recipe Picker**: Pick a well-known water recipe from the dropdown and choose your desired water amount. The calculator tells you exactly how many grams of each mineral to add.
-- **Recipe Chart**: View all recipes at once in a table, showing the grams needed for your selected water volume and mineral choices. Great for comparing recipes side by side.
-- **Custom Recipe Creator**: Create your own recipe by entering your desired GH and KH values. The calculator figures out how much of each mineral you need.
+- **Recipe Builder**: Create your own recipe by entering your desired GH and KH values. The calculator figures out how much of each mineral you need.
 - **GH/KH Lookup**: The reverse calculator — enter the grams you used and it tells you the resulting GH and KH of your water.
 
 ## Development
