@@ -3,8 +3,7 @@ import { NavLink } from "react-router-dom";
 
 const NAV_ITEMS = [
     { to: "/", label: "Recipe Picker" },
-    { to: "/chart", label: "Recipe Chart" },
-    { to: "/custom", label: "Custom Recipe" },
+    { to: "/custom", label: "Recipe Builder" },
     { to: "/lookup", label: "GH/KH Lookup" },
     { to: "/about", label: "About" },
 ];
