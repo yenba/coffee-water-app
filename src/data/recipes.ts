@@ -14,6 +14,10 @@ export const RECIPES: Recipe[] = [
   { name: "Hendon Water 2", gh: 98.7, kh: 31.0 },
   { name: "Holy Water", gh: 61.7, kh: 23.0 },
   { name: "Melbourne", gh: 49.5, kh: 20.3 },
+  { name: "Rao/Perger", gh: 87.5, kh: 40.5 },
+  { name: "SCA Optimal", gh: 67.9, kh: 40.1 },
   { name: "Sey Water", gh: 36.0, kh: 15.0 },
+  { name: "Third Wave Classic", gh: 165.7, kh: 47.7 },
   { name: "TWW Espresso Inspired", gh: 160.0, kh: 67.5 },
+  { name: "WOC Budapest", gh: 50.6, kh: 40.1 },
 ];

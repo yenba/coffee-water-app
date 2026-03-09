@@ -97,6 +97,12 @@ export default function About() {
         <Section title="Links &amp; Resources">
           <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
             <li>
+              <ExtLink href="https://docs.google.com/spreadsheets/d/1nFnvUGzP8NvngkYgNaknQgA1QO0o5tQYwyWZcyRGsO0">
+                Original Google Spreadsheet
+              </ExtLink>{" "}
+              — the OG calculator this app is based on
+            </li>
+            <li>
               <ExtLink href="https://discord.gg/espresso">
                 Espresso Aficionados Discord
               </ExtLink>
