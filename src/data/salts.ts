@@ -70,5 +70,5 @@ export const BUFFER_SALTS = SALTS.filter((s) => s.purpose === "buffer");
 export const EASY_HARDNESS_SALTS = HARDNESS_SALTS.filter((s) => s.easyPicker);
 export const EASY_BUFFER_SALTS = BUFFER_SALTS.filter((s) => s.easyPicker);
 
-export const getSaltById = (id: string): Salt | undefined =>
-  SALTS.find((s) => s.id === id);
+export const getSaltById = (id: string): Salt =>
+  SALTS.find((s) => s.id === id) ?? SALTS[0];

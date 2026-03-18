@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { HARDNESS_SALTS, BUFFER_SALTS, getSaltById } from "../data/salts";
 import { calcGrams, toliters, formatNumber } from "../utils/calculations";
 import { usePreferences } from "../utils/PreferencesContext";
@@ -17,20 +17,22 @@ export default function CustomRecipe() {
   } = usePreferences();
   const [searchParams] = useSearchParams();
 
-  const [desiredGH, setDesiredGH] = usePersistedState("coffee_water_custom_gh", 30.0);
-  const [desiredKH, setDesiredKH] = usePersistedState("coffee_water_custom_kh", 70.0);
-  const [recipeName, setRecipeName] = useState(searchParams.get("name") || "");
-  const [saveStatus, setSaveStatus] = useState<"idle" | "success">("idle");
+  // Persisted state for when no URL params are present
+  const [persistedGH, setPersistedGH] = usePersistedState("coffee_water_custom_gh", 30.0);
+  const [persistedKH, setPersistedKH] = usePersistedState("coffee_water_custom_kh", 70.0);
 
   // URL params override persisted values (for share links and edit flows)
-  useEffect(() => {
-    const urlGH = searchParams.get("gh");
-    const urlKH = searchParams.get("kh");
-    const urlName = searchParams.get("name");
-    if (urlGH) setDesiredGH(parseFloat(urlGH));
-    if (urlKH) setDesiredKH(parseFloat(urlKH));
-    if (urlName) setRecipeName(urlName);
-  }, [searchParams, setDesiredGH, setDesiredKH]);
+  const urlGH = searchParams.get("gh");
+  const urlKH = searchParams.get("kh");
+  const urlName = searchParams.get("name");
+
+  const desiredGH = urlGH ? parseFloat(urlGH) : persistedGH;
+  const desiredKH = urlKH ? parseFloat(urlKH) : persistedKH;
+  const setDesiredGH = (v: number) => { setPersistedGH(v); };
+  const setDesiredKH = (v: number) => { setPersistedKH(v); };
+
+  const [recipeName, setRecipeName] = useState(urlName || "");
+  const [saveStatus, setSaveStatus] = useState<"idle" | "success">("idle");
   const handleSaveRecipe = () => {
     if (!recipeName.trim()) return;
     addCustomRecipe({
@@ -45,8 +47,8 @@ export default function CustomRecipe() {
     }, 2000);
   };
 
-  const hardnessSalt = getSaltById(hardnessSaltId)!;
-  const bufferSalt = getSaltById(bufferSaltId)!;
+  const hardnessSalt = getSaltById(hardnessSaltId);
+  const bufferSalt = getSaltById(bufferSaltId);
 
   const results = useMemo(() => {
     const waterLiters = toliters(waterAmount, unit);

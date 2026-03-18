@@ -133,13 +133,31 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         return JSON.stringify(data, null, 2);
     };
 
+    const isValidUnit = (v: unknown): v is Unit =>
+        v === "liters" || v === "gallons";
+
+    const isValidTheme = (v: unknown): v is Theme =>
+        v === "system" || v === "light" || v === "dark";
+
+    const isValidRecipe = (v: unknown): v is Recipe =>
+        typeof v === "object" && v !== null &&
+        typeof (v as Record<string, unknown>).name === "string" &&
+        typeof (v as Record<string, unknown>).gh === "number" &&
+        typeof (v as Record<string, unknown>).kh === "number";
+
     const importSharedFields = (data: Record<string, unknown>) => {
-        if (data.unit) setUnit(data.unit as Unit);
-        if (data.theme) setTheme(data.theme as Theme);
-        if (data.waterAmount !== undefined) setWaterAmount(data.waterAmount as number);
-        if (data.hardnessSaltId) setHardnessSaltId(data.hardnessSaltId as string);
-        if (data.bufferSaltId) setBufferSaltId(data.bufferSaltId as string);
-        if (data.customRecipes && Array.isArray(data.customRecipes)) {
+        if (isValidUnit(data.unit)) setUnit(data.unit);
+        if (isValidTheme(data.theme)) setTheme(data.theme);
+        if (typeof data.waterAmount === "number" && !isNaN(data.waterAmount) && data.waterAmount > 0) {
+            setWaterAmount(data.waterAmount);
+        }
+        if (typeof data.hardnessSaltId === "string" && data.hardnessSaltId) {
+            setHardnessSaltId(data.hardnessSaltId);
+        }
+        if (typeof data.bufferSaltId === "string" && data.bufferSaltId) {
+            setBufferSaltId(data.bufferSaltId);
+        }
+        if (Array.isArray(data.customRecipes) && data.customRecipes.every(isValidRecipe)) {
             setCustomRecipesState(data.customRecipes);
             localStorage.setItem("coffee_water_recipes", JSON.stringify(data.customRecipes));
         }

@@ -27,8 +27,8 @@ export default function RecipePicker() {
   const [maxKH, setMaxKH] = usePersistedState("coffee_water_picker_max_kh", 300);
 
   const allRecipes = useMemo(() => [...RECIPES, ...customRecipes], [customRecipes]);
-  const hardnessSalt = getSaltById(hardnessSaltId)!;
-  const bufferSalt = getSaltById(bufferSaltId)!;
+  const hardnessSalt = getSaltById(hardnessSaltId);
+  const bufferSalt = getSaltById(bufferSaltId);
   const waterLiters = toliters(waterAmount, unit);
 
   const displayRecipes = useMemo(() => {

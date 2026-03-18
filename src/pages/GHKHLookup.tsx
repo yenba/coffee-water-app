@@ -17,8 +17,8 @@ export default function GHKHLookup() {
   const [hardnessGrams, setHardnessGrams] = usePersistedState("coffee_water_lookup_hardness_grams", 1.97);
   const [bufferGrams, setBufferGrams] = usePersistedState("coffee_water_lookup_buffer_grams", 0.671);
 
-  const hardnessSalt = getSaltById(hardnessSaltId)!;
-  const bufferSalt = getSaltById(bufferSaltId)!;
+  const hardnessSalt = getSaltById(hardnessSaltId);
+  const bufferSalt = getSaltById(bufferSaltId);
 
   const results = useMemo(() => {
     const waterLiters = toliters(waterAmount, unit);
