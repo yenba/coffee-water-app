@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
 
 const NAV_ITEMS = [
@@ -29,6 +29,19 @@ function HamburgerIcon({ open }: { open: boolean }) {
 
 export default function Sidebar() {
     const [menuOpen, setMenuOpen] = useState(false);
+    const navRef = useRef<HTMLElement>(null);
+
+    // Close mobile menu on ESC key
+    useEffect(() => {
+        if (!menuOpen) return;
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape") setMenuOpen(false);
+        };
+        document.addEventListener("keydown", handleKeyDown);
+        // Focus the nav when opened so keyboard users can navigate
+        navRef.current?.focus();
+        return () => document.removeEventListener("keydown", handleKeyDown);
+    }, [menuOpen]);
 
     return (
         <>
@@ -60,7 +73,9 @@ export default function Sidebar() {
 
             {/* Sidebar Navigation */}
             <nav
-                className={`fixed inset-y-0 left-0 z-30 flex w-64 flex-col border-r border-gray-200 bg-white transition-transform duration-300 md:static md:translate-x-0 dark:border-slate-800 dark:bg-slate-900 ${menuOpen ? "translate-x-0" : "-translate-x-full"
+                ref={navRef}
+                tabIndex={-1}
+                className={`fixed inset-y-0 left-0 z-30 flex w-64 flex-col border-r border-gray-200 bg-white transition-transform duration-300 md:static md:translate-x-0 dark:border-slate-800 dark:bg-slate-900 outline-none ${menuOpen ? "translate-x-0" : "-translate-x-full"
                     }`}
             >
                 <div className="hidden h-16 shrink-0 items-center px-6 md:flex">

@@ -31,6 +31,8 @@ export default function RecipePicker() {
   const bufferSalt = getSaltById(bufferSaltId);
   const waterLiters = toliters(waterAmount, unit);
 
+  const builtInNames = useMemo(() => new Set(RECIPES.map(r => r.name)), []);
+
   const displayRecipes = useMemo(() => {
     // 1. Filter
     const filtered = allRecipes.filter(r => r.gh <= maxGH && r.kh <= maxKH);
@@ -38,8 +40,8 @@ export default function RecipePicker() {
     // 2. Sort
     filtered.sort((a, b) => {
       if (showCustomFirst) {
-        const aIsCustom = !RECIPES.some(r => r.name === a.name);
-        const bIsCustom = !RECIPES.some(r => r.name === b.name);
+        const aIsCustom = !builtInNames.has(a.name);
+        const bIsCustom = !builtInNames.has(b.name);
         if (aIsCustom && !bIsCustom) return -1;
         if (!aIsCustom && bIsCustom) return 1;
       }
@@ -55,7 +57,7 @@ export default function RecipePicker() {
     });
 
     return filtered;
-  }, [allRecipes, maxGH, maxKH, sortBy, showCustomFirst]);
+  }, [allRecipes, builtInNames, maxGH, maxKH, sortBy, showCustomFirst]);
 
   return (
     <div className="space-y-6">
@@ -184,7 +186,7 @@ export default function RecipePicker() {
         ) : displayRecipes.map((recipe) => {
           const hGrams = calcGrams(hardnessSalt.calcAmount, recipe.gh, waterLiters);
           const bGrams = calcGrams(bufferSalt.calcAmount, recipe.kh, waterLiters);
-          const isCustom = !RECIPES.some(r => r.name === recipe.name);
+          const isCustom = !builtInNames.has(recipe.name);
 
           return (
             <div key={recipe.name} className="flex flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-sky-200 dark:hover:border-sky-900 focus-within:ring-2 focus-within:ring-sky-500">
@@ -206,6 +208,7 @@ export default function RecipePicker() {
                         navigate(`/custom?${searchParams.toString()}`);
                       }}
                       className="text-sky-400 hover:text-sky-600 dark:text-sky-500 dark:hover:text-sky-400 transition-colors p-1 rounded-md hover:bg-sky-50 dark:hover:bg-sky-900/30"
+                      aria-label={`Edit ${recipe.name}`}
                       title="Edit Custom Recipe"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
@@ -214,6 +217,7 @@ export default function RecipePicker() {
                       type="button"
                       onClick={() => removeCustomRecipe(recipe.name)}
                       className="text-red-400 hover:text-red-600 dark:text-red-500 dark:hover:text-red-400 transition-colors p-1 rounded-md hover:bg-red-50 dark:hover:bg-red-900/30"
+                      aria-label={`Delete ${recipe.name}`}
                       title="Delete Custom Recipe"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" /></svg>
