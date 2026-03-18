@@ -88,12 +88,19 @@ describe("formatNumber", () => {
 });
 
 describe("formatWaterLabel", () => {
-  it("formats liters", () => {
-    expect(formatWaterLabel(1, "liters")).toBe("1 Liters");
+  it("formats singular liters", () => {
+    expect(formatWaterLabel(1, "liters")).toBe("1 Liter");
+  });
+
+  it("formats plural liters", () => {
     expect(formatWaterLabel(2.5, "liters")).toBe("2.5 Liters");
   });
 
-  it("formats gallons", () => {
-    expect(formatWaterLabel(1, "gallons")).toBe("1 Gallons");
+  it("formats singular gallons", () => {
+    expect(formatWaterLabel(1, "gallons")).toBe("1 Gallon");
+  });
+
+  it("formats plural gallons", () => {
+    expect(formatWaterLabel(2, "gallons")).toBe("2 Gallons");
   });
 });

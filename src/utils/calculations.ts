@@ -29,4 +29,4 @@ export const formatNumber = (value: number, decimals: number = 3): string =>
 
 /** Format water amount with unit label */
 export const formatWaterLabel = (amount: number, unit: Unit): string =>
-  `${amount} ${unit === "liters" ? "Liters" : "Gallons"}`;
+  `${amount} ${unit === "liters" ? (amount === 1 ? "Liter" : "Liters") : (amount === 1 ? "Gallon" : "Gallons")}`;

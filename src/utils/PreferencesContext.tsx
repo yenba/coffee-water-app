@@ -83,8 +83,9 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     };
 
     const setWaterAmount = (amount: number) => {
-        setWaterAmountState(amount);
-        localStorage.setItem("coffee_water_water_amount", String(amount));
+        const clamped = isNaN(amount) || amount < 0 ? DEFAULT_WATER_AMOUNT : amount;
+        setWaterAmountState(clamped);
+        localStorage.setItem("coffee_water_water_amount", String(clamped));
     };
 
     const setHardnessSaltId = (id: string) => {
@@ -247,7 +248,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
             if (e.key === "coffee_water_theme") setThemeState((e.newValue as Theme) || DEFAULT_THEME);
             if (e.key === "coffee_water_water_amount") {
                 const parsed = parseFloat(e.newValue || "");
-                setWaterAmountState(isNaN(parsed) ? DEFAULT_WATER_AMOUNT : parsed);
+                setWaterAmountState(isNaN(parsed) || parsed < 0 ? DEFAULT_WATER_AMOUNT : parsed);
             }
             if (e.key === "coffee_water_hardness_salt") setHardnessSaltIdState(e.newValue || DEFAULT_HARDNESS_SALT_ID);
             if (e.key === "coffee_water_buffer_salt") setBufferSaltIdState(e.newValue || DEFAULT_BUFFER_SALT_ID);
